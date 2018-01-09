@@ -12,6 +12,8 @@ var LoadingTimeStamp = 0;
 // var numModels = 13;
 var testArray = [];
 var storedTexture = [];
+var bustOn = undefined;
+
 
 window.onload = function() {
     console.log("start onload");
@@ -32,9 +34,6 @@ function init() {
         Detector.addGetWebGLMessage();
     }
     /* Camera */
-    // camera = new THREE.OrthographicCamera( window.innerWidth / - 3400, window.innerWidth / 3400,window.innerHeight / 3400, window.innerHeight / - 3400, 1, 500 );
-    // // camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-    // camera.position.set(0.5,0.1,5);
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.z = 2;
 
@@ -63,51 +62,37 @@ function init() {
     sunLight.castShadow = false;
     scene.add(sunLight);
 
-    // spotlightBack = new THREE.SpotLight( "rgb(144,86,170)", 0.5, 156, 0.01, 0.7, 1.6 );
-    // spotlightBack.position.set(0.5,0,40);
-    // spotlightBack.target.position.set(0.5,0.05,1.5);
-    // spotlightBack.target.updateMatrixWorld();
-    // spotlightBack.castShadow = false;
-    // scene.add( spotlightBack );
-
     /* Generate 13 busts */
     // var paths = ["01","02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
     // var paths = ["Eloisa","Giannina", "Kat", "Kristen", "May", "Remy", "Sabrina", "Torraine", "Vera", "Yulu"]
-    var paths = ["Eloisa","Giannina", "Kat"]
+    
+    //path names must match ids of p tags
+    var paths = ["eloisa","giannina","kat"]
 
-        .map(function(value) {
-            return "assets/" + value + "/";
-        });
+    // add event listeners to list of names
+    console.log(paths);
+    for (var n = paths.length - 1; n >= 0; n--) {
+        document.getElementById(paths[n]).addEventListener("click", displayOneModel, false);
+    }
+
     j = 0;
+
     function loadNextPath() {
-        var pathToLoad = paths.pop();
-        // console.time(pathToLoad);
-        // var start = window.performance.now();
-        // console.log("start: " + start);
+        var p = paths.pop();
+        var pathToLoad = "assets/" + p + "/";
+        // console.log(p);
         ModelCount.innerHTML = pathToLoad;
-        if (!pathToLoad) {
+        if (!p) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
             animate();
             document.getElementById("loadingOverlay").style.display="none";
             if (currentURL != "") {
                 //load specific piece
                 var URLbust = 13 - currentURL.substring(4, 6);
-                // console.log(currentURL.substring(1, 6));
                 console.log("the current URL / model num is: " + URLbust);
-                //now rotate busts to proper position
-                //then change variable so bustOn will be opened
-                // var evenInterval = (360/numModels);
-                // targetTheta = theta + (evenInterval*incrementBustMatch[Number(URLbust)]);
-                // rotateAligned = true;
-                // rotate bust 
-                // revolveClicked = true;
-                //open layer 2
-                // openLayerTwoDelay = true;
-                // if (isMobile == true) {
-                //     openInfoPanel(currentURL.substring(1, 6));
-                // }
             }
         } else {
+            // document.getElementById(p).addEventListener('click', displayOneModel(p));
             var mtlLoader = new THREE.MTLLoader();
             mtlLoader.setBaseUrl(pathToLoad);
             mtlLoader.setPath(pathToLoad);                       
@@ -119,17 +104,17 @@ function init() {
                 objLoader.setPath(pathToLoad);
                 // console.log("loading model");
                 objLoader.load('model_mesh.obj', function (obj) {
-
-                    obj.name = pathToLoad.substring(12, 17);
+                    var l = pathToLoad.length;
+                    obj.name = pathToLoad.substring(7, l-1);
                     var mesh = obj.children[ 0 ]; 
                     mesh.geometry = new THREE.Geometry().fromBufferGeometry( mesh.geometry ); 
                     mesh.geometry.mergeVertices(); 
                     mesh.geometry.computeVertexNormals();
                     testArray.push(obj);
                     storedTexture[j] = obj.children[0].material.map;
-                    // console.log(storedTexture[j]);
+                    // console.log(obj.name);
                     scene.add(obj); 
-
+                    // obj.visible = false;
                     j++; 
                     loadNextPath(); 
                 });
@@ -162,6 +147,7 @@ function init() {
     renderer.setSize(window.innerWidth/2, window.innerHeight/2);
     renderer.setClearColor(new THREE.Color(0xffffff)); //2a6489
     container.appendChild(renderer.domElement);
+    
 
     /* Events - Desktop Only */
     //for dragging/rotating bust
@@ -194,11 +180,23 @@ function init() {
     //     // }
     // }
     //stats
-    javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
+    // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
+}
+
+function displayOneModel(evt) {
+    console.log(evt.target.id);
+    var foundPerson;
+    testArray.forEach(function (person) {
+        if (person.name === evt.target.id) {
+            var foundPerson = person;
+            foundPerson.visible = true;
+        } else {
+            person.visible = false;
+        }
+    });
 }
 
 function animate() {
-    //console.log('called animate!');
     requestAnimationFrame(animate);
     render();
 }
