@@ -7,26 +7,23 @@ var scene = new THREE.Scene();
 window.scene = scene;
 
 var lighting, ambient, keyLight, fillLight, backLight;
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
 
 var LoadingTimeStamp = 0;
-// var numModels = 13;
 var testArray = [];
 var storedTexture = [];
 var bustOn = undefined;
-
+var bustOnName = undefined;
 
 window.onload = function() {
     console.log("start onload");
-    // console.log("window pixel width: " + window.outerWidth);
-    // isMobile = false;
     init();
 };
 
 function init() {
+    window.addEventListener('resize', onWindowResize, false);
     container = document.getElementById('threeD-content');
-    
-    // container = document.createElement('div');
-    // document.body.appendChild(container);
     var ModelCount = document.getElementById("modelCount");
     var LoadCount = document.getElementById("loadCount");
 
@@ -35,15 +32,22 @@ function init() {
     }
     /* Camera */
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 2;
+    camera.position.z = 2.3;
+
+    /* Controls */
+    var controls = new THREE.OrbitControls( camera );
+    // console.log(controls);
+    controls.enableDamping = true; 
+    controls.dampingFactor = 0.25; 
+    controls.enableZoom = false;
 
     /* Scene */
     lighting = false;
 
-    ambient = new THREE.AmbientLight(0xffffff, 1.0);
+    ambient = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambient);
 
-    topLeftLight = new THREE.DirectionalLight("rgb(184,176,149)", 0.9);
+    topLeftLight = new THREE.DirectionalLight("rgb(184,176,149)", 0.34);
     topLeftLight.position.set(-40, 10, 50);
     topLeftLight.target.position.set(0.5,0,1.5);
     topLeftLight.target.updateMatrixWorld();
@@ -62,12 +66,14 @@ function init() {
     sunLight.castShadow = false;
     scene.add(sunLight);
 
-    /* Generate 13 busts */
-    // var paths = ["01","02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
-    // var paths = ["Eloisa","Giannina", "Kat", "Kristen", "May", "Remy", "Sabrina", "Torraine", "Vera", "Yulu"]
-    
+    var size = 0.8; 
+    var divisions = 0.1; 
+    var gridHelper = new THREE.GridHelper( size, divisions ); 
+    gridHelper.setColors( 0xf618ef, 0x0ccf0c );
+    scene.add( gridHelper );
+    // console.log( gridHelper );
     //path names must match ids of p tags
-    var paths = ["eloisa","giannina","kat"]
+    var paths = ["yulu"]
 
     // add event listeners to list of names
     console.log(paths);
@@ -114,8 +120,13 @@ function init() {
                     storedTexture[j] = obj.children[0].material.map;
                     // console.log(obj.name);
                     scene.add(obj); 
-                    // obj.visible = false;
-                    j++; 
+                    // console.log(obj);
+                    obj.visible = true;
+                    obj.children["0"].geometry.computeBoundingSphere();
+                    var bottOfFeet=obj.children["0"].geometry.boundingSphere.center.y-obj.children["0"].geometry.boundingSphere.radius;
+                    // console.log(bottOfFeet);
+                    // console.log(gridHelper); 
+                    gridHelper.position.y=bottOfFeet;
                     loadNextPath(); 
                 });
             });
@@ -142,58 +153,49 @@ function init() {
     canvas.style.marginLeft = "auto";
     canvas.style.marginRight = "auto";
     canvas.style.display = "block";
+    canvas.allowTouchScrolling = true;
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth/2, window.innerHeight/2);
-    renderer.setClearColor(new THREE.Color(0xffffff)); //2a6489
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    // renderer.setSize(document.getElementById("threeD-content").clientWidth, document.getElementById("threeD-content").clientHeight)
+    // var ren_W = document.getElementById("threeD-content").clientWidth;
+    // var ren_H = (ren_W*window.innerHeight)/window.innerWidth;
+    // renderer.setSize(ren_W, ren_H);
+    renderer.setClearColor(new THREE.Color(0xF8F8F8)); //2a6489
     container.appendChild(renderer.domElement);
-    
-
-    /* Events - Desktop Only */
-    //for dragging/rotating bust
-    // document.getElementById("imgDisplay").onmousedown = function() {mouseDown()};
-    // document.getElementById("imgDisplay").onmousemove = function() {mouseMove(event)};
-    // document.getElementById("imgDisplay").onclick = function() {mouseDragOff()};
-    // document.getElementById("canvasID").onclick = function() {onCanvasClick(event)};
-    // document.getElementById("leftblock").onclick = function() {goBackToLayerOne();};
-    // document.getElementById("rightblock").onclick = function() {goBackToLayerOne();};
-    // document.onkeydown = checkKey;
   
-    // var infoPanel = document.getElementById('infoPanel');
-    // infoPanel.addEventListener ('click',  function (e) {
-    //     console.log("clicked info panel");
-    //     e.stopPropagation();
-    //     // msg (elem);
-    // }, false);
-
-    //info panel
-    // document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
-    // var itemBox = document.getElementById('itemBox-bottom');
-    // itemBox.addEventListener ('click',  function (e) {
-    //     e.stopPropagation();
-    //     // msg (elem);
-    // }, false);
-
-    // window.onpopstate=function() {
-    //     // if (currentURL != "") {
-    //         goBackToLayerOne();
-    //     // }
-    // }
-    //stats
-    // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
 
 function displayOneModel(evt) {
-    console.log(evt.target.id);
+    // remove selected model name in list
+    if (bustOnName != undefined) {
+        var modelRemoveClass = document.getElementById(bustOnName).classList;
+        modelRemoveClass.remove("selected");
+    }
     var foundPerson;
-    testArray.forEach(function (person) {
-        if (person.name === evt.target.id) {
-            var foundPerson = person;
-            foundPerson.visible = true;
+    for (var i = testArray.length - 1; i >= 0; i--) {
+        if (testArray[i].name === evt.target.id) {
+            bustOnName = evt.target.id;
+            var foundPerson = i;
+            bustOn = i;
+            testArray[i].visible = true;
+            var modelClasses = document.getElementById(evt.target.id).classList;
+            modelClasses.add("selected");
         } else {
-            person.visible = false;
+            testArray[i].visible = false;
         }
-    });
+    }
+}
+
+function onWindowResize() {
+    // resize canvas
+    camera.aspect = window.innerWidth / window.innerHeight; 
+    camera.updateProjectionMatrix(); 
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    // var ren_W = document.getElementById("threeD-content").clientWidth;
+    // var ren_H = (ren_W*window.innerHeight)/window.innerWidth;
+    // renderer.setSize(ren_W, ren_H);
+
 }
 
 function animate() {
