@@ -7,6 +7,7 @@ var scene = new THREE.Scene();
 window.scene = scene;
 
 var lighting, ambient, keyLight, fillLight, backLight;
+var gridHelper;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
@@ -32,7 +33,7 @@ function init() {
     }
     /* Camera */
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 2.3;
+    camera.position.z = 2.5;
 
     /* Controls */
     var controls = new THREE.OrbitControls( camera );
@@ -68,12 +69,12 @@ function init() {
 
     var size = 0.8; 
     var divisions = 0.1; 
-    var gridHelper = new THREE.GridHelper( size, divisions ); 
+    gridHelper = new THREE.GridHelper( size, divisions ); 
     gridHelper.setColors( 0xf618ef, 0x0ccf0c );
     scene.add( gridHelper );
     // console.log( gridHelper );
     //path names must match ids of p tags
-    var paths = ["yulu"]
+    var paths = ["yulu","sabrina","eloisa","remy","vera"]
 
     // add event listeners to list of names
     console.log(paths);
@@ -99,17 +100,22 @@ function init() {
             }
         } else {
             // document.getElementById(p).addEventListener('click', displayOneModel(p));
+            // console.log(p);
             var mtlLoader = new THREE.MTLLoader();
             mtlLoader.setBaseUrl(pathToLoad);
-            mtlLoader.setPath(pathToLoad);                       
-            mtlLoader.load('model_mesh.obj.mtl', function (materials) {
+            mtlLoader.setPath(pathToLoad);     
+            var mtlFile = p + ".mtl";
+            // console.log(mtlFile);                  
+            mtlLoader.load(mtlFile, function (materials) {
 
                 materials.preload();
                 var objLoader = new THREE.OBJLoader();
                 objLoader.setMaterials(materials);
                 objLoader.setPath(pathToLoad);
                 // console.log("loading model");
-                objLoader.load('model_mesh.obj', function (obj) {
+                var objFile = p + ".obj";
+                // console.log(objFile);
+                objLoader.load(objFile, function (obj) {
                     var l = pathToLoad.length;
                     obj.name = pathToLoad.substring(7, l-1);
                     var mesh = obj.children[ 0 ]; 
@@ -121,7 +127,13 @@ function init() {
                     // console.log(obj.name);
                     scene.add(obj); 
                     // console.log(obj);
-                    obj.visible = true;
+                    // TEMP
+                    if (obj.name == "eloisa") {
+                        obj.visible = true;
+                    } else {
+                       obj.visible = false; 
+                    }
+                    
                     obj.children["0"].geometry.computeBoundingSphere();
                     var bottOfFeet=obj.children["0"].geometry.boundingSphere.center.y-obj.children["0"].geometry.boundingSphere.radius;
                     // console.log(bottOfFeet);
@@ -163,15 +175,16 @@ function init() {
     // renderer.setSize(ren_W, ren_H);
     renderer.setClearColor(new THREE.Color(0xF8F8F8)); //2a6489
     container.appendChild(renderer.domElement);
+
   
 }
 
 function displayOneModel(evt) {
     // remove selected model name in list
-    if (bustOnName != undefined) {
-        var modelRemoveClass = document.getElementById(bustOnName).classList;
-        modelRemoveClass.remove("selected");
-    }
+    // if (bustOnName != undefined) {
+    //     var modelRemoveClass = document.getElementById(bustOnName).classList;
+    //     modelRemoveClass.remove("selected");
+    // }
     var foundPerson;
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (testArray[i].name === evt.target.id) {
@@ -179,12 +192,39 @@ function displayOneModel(evt) {
             var foundPerson = i;
             bustOn = i;
             testArray[i].visible = true;
-            var modelClasses = document.getElementById(evt.target.id).classList;
-            modelClasses.add("selected");
+            // reposition grid
+            testArray[i].children["0"].geometry.computeBoundingSphere();
+            var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
+            gridHelper.position.y=bottOfFeet;
+            // var modelClasses = document.getElementById(evt.target.id).classList;
+            // modelClasses.add("selected");
+            // console.log(evt.target.innerHTML);
+            // console.log(document.getElementById("selected").innerHTML);
+            document.getElementById("selected").innerHTML = evt.target.innerHTML;
         } else {
             testArray[i].visible = false;
         }
     }
+}
+
+// dropdown
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
 }
 
 function onWindowResize() {
