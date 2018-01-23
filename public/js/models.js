@@ -74,7 +74,8 @@ function init() {
     scene.add( gridHelper );
     // console.log( gridHelper );
     //path names must match ids of p tags
-    var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine", "kat", "kristen", "gabriette"]
+    // var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine", "kat", "kristen", "gabriette"]
+    var paths = ["yulu","sabrina","eloisa","remy","vera","giannina", "kristen"]
 
     // add event listeners to list of names
     console.log(paths);
@@ -181,7 +182,7 @@ function init() {
 
     /* Controls */
     // var c = document.getElementById("canvasID");
-    console.log(renderer.domElement);
+    // console.log(renderer.domElement);
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     // console.log(controls);
     controls.enableDamping = true; 
