@@ -1,9 +1,31 @@
 body {
   background-color: blue;
   margin: 0px;
-  font-family: Courier, monospace;
+  font-family: 'Prestige Elite Std', Courier, monospace;
   color: #00ff00;
   font-size: 1em;
+}
+
+@font-face {
+    font-family: 'Prestige Elite Std Bd';
+    src: url('fonts/PrestigeEliteStd-Bd.eot');
+    src: url('fonts/PrestigeEliteStd-Bd.eot?#iefix') format('embedded-opentype'),
+        url('fonts/PrestigeEliteStd-Bd.woff2') format('woff2'),
+        url('fonts/PrestigeEliteStd-Bd.woff') format('woff'),
+        url('fonts/PrestigeEliteStd-Bd.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Prestige Elite Std';
+    src: url('fonts/PrestigeEliteStd.eot');
+    src: url('fonts/PrestigeEliteStd.eot?#iefix') format('embedded-opentype'),
+        url('fonts/PrestigeEliteStd.woff2') format('woff2'),
+        url('fonts/PrestigeEliteStd.woff') format('woff'),
+        url('fonts/PrestigeEliteStd.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 #loadingOverlay {
@@ -45,7 +67,7 @@ body {
 }
 
 .dropbtn {
-	font-family: Courier, monospace;
+	font-family: 'Prestige Elite Std', Courier, monospace;
     background-color: blue;
     color: #00ff00;
     border: none;
@@ -111,6 +133,7 @@ button {
 	font-size: 2em;
 	border-top: 0.5px solid #00ff00;
 	border-bottom: 0.5px solid #00ff00;
+	padding-top: 0.4em;
 }
 
 #info {
@@ -164,7 +187,6 @@ header {
 	height: auto;
 	width: 100%;
 	background: blue;
-	z-index: -100;
 	overflow: hidden;
 }
 

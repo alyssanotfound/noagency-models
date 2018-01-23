@@ -42,13 +42,6 @@ function init() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.z = 2.5;
 
-    /* Controls */
-    var controls = new THREE.OrbitControls( camera );
-    // console.log(controls);
-    controls.enableDamping = true; 
-    controls.dampingFactor = 0.25; 
-    controls.enableZoom = false;
-
     /* Scene */
     lighting = false;
 
@@ -81,12 +74,12 @@ function init() {
     scene.add( gridHelper );
     // console.log( gridHelper );
     //path names must match ids of p tags
-    var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine"]
+    var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine", "kat", "kristen", "gabriette"]
 
     // add event listeners to list of names
     console.log(paths);
     for (var n = paths.length - 1; n >= 0; n--) {
-        console.log(paths[n]);
+        // console.log(paths[n]);
         document.getElementById(paths[n]).addEventListener("click", displayOneModel, false);
     }
 
@@ -186,7 +179,14 @@ function init() {
     renderer.setClearColor(new THREE.Color(0xF8F8F8)); //2a6489
     container.appendChild(renderer.domElement);
 
-  
+    /* Controls */
+    // var c = document.getElementById("canvasID");
+    console.log(renderer.domElement);
+    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    // console.log(controls);
+    controls.enableDamping = true; 
+    controls.dampingFactor = 0.25; 
+    controls.enableZoom = false;
 }
 
 function displayOneModel(evt) {

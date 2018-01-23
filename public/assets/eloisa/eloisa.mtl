@@ -6,5 +6,5 @@ newmtl defaultMat
 Kd 0.7 0.7 0.7
 
 newmtl mat1
-map_Kd eloisa.bmp
+map_Kd eloisa.jpg
 
