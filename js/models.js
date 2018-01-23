@@ -17,6 +17,8 @@ var storedTexture = [];
 var bustOn = undefined;
 var bustOnName = undefined;
 
+var currentURL;
+
 window.onload = function() {
     console.log("start onload");
     init();
@@ -24,6 +26,11 @@ window.onload = function() {
 
 function init() {
     window.addEventListener('resize', onWindowResize, false);
+
+    //URL
+    currentURL = window.location.hash;
+    // console.log(currentURL);
+
     container = document.getElementById('threeD-content');
     var ModelCount = document.getElementById("modelCount");
     var LoadCount = document.getElementById("loadCount");
@@ -74,11 +81,12 @@ function init() {
     scene.add( gridHelper );
     // console.log( gridHelper );
     //path names must match ids of p tags
-    var paths = ["yulu","sabrina","eloisa","remy","vera"]
+    var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine"]
 
     // add event listeners to list of names
     console.log(paths);
     for (var n = paths.length - 1; n >= 0; n--) {
+        console.log(paths[n]);
         document.getElementById(paths[n]).addEventListener("click", displayOneModel, false);
     }
 
@@ -95,8 +103,9 @@ function init() {
             document.getElementById("loadingOverlay").style.display="none";
             if (currentURL != "") {
                 //load specific piece
-                var URLbust = 13 - currentURL.substring(4, 6);
+                var URLbust = currentURL.split("#").pop();
                 console.log("the current URL / model num is: " + URLbust);
+                displayOneModelOnLoad(URLbust);
             }
         } else {
             // document.getElementById(p).addEventListener('click', displayOneModel(p));
@@ -126,10 +135,10 @@ function init() {
                     storedTexture[j] = obj.children[0].material.map;
                     // console.log(obj.name);
                     scene.add(obj); 
-                    // console.log(obj);
+                    // console.log(currentURL);
                     // TEMP
-                    if (obj.name == "eloisa") {
-                        obj.visible = true;
+                    if (currentURL == "" && obj.name == "eloisa") {
+                        displayOneModelOnLoad(obj.name);
                     } else {
                        obj.visible = false; 
                     }
@@ -168,7 +177,8 @@ function init() {
     canvas.allowTouchScrolling = true;
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    // console.log(canvas.width);
+    renderer.setSize(window.innerWidth*0.7, window.innerHeight*0.7);
     // renderer.setSize(document.getElementById("threeD-content").clientWidth, document.getElementById("threeD-content").clientHeight)
     // var ren_W = document.getElementById("threeD-content").clientWidth;
     // var ren_H = (ren_W*window.innerHeight)/window.innerWidth;
@@ -201,6 +211,35 @@ function displayOneModel(evt) {
             // console.log(evt.target.innerHTML);
             // console.log(document.getElementById("selected").innerHTML);
             document.getElementById("selected").innerHTML = evt.target.innerHTML;
+            document.getElementById("info").innerHTML = "height of " + bustOnName;
+            updateURL(bustOnName)
+        } else {
+            testArray[i].visible = false;
+        }
+    }
+}
+
+// on load display active model from url
+function displayOneModelOnLoad(modelName) {
+
+    var foundPerson;
+    for (var i = testArray.length - 1; i >= 0; i--) {
+        if (testArray[i].name === modelName) {
+            bustOnName = modelName;
+            var foundPerson = i;
+            bustOn = i;
+            testArray[i].visible = true;
+            // reposition grid
+            testArray[i].children["0"].geometry.computeBoundingSphere();
+            var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
+            gridHelper.position.y=bottOfFeet;
+            // var modelClasses = document.getElementById(evt.target.id).classList;
+            // modelClasses.add("selected");
+            // console.log(evt.target.innerHTML);
+            // console.log(document.getElementById("selected").innerHTML);
+            document.getElementById("selected").innerHTML = document.getElementById(bustOnName).innerHTML;
+            document.getElementById("info").innerHTML = "height of " + bustOnName;
+            updateURL(bustOnName);
         } else {
             testArray[i].visible = false;
         }
@@ -231,11 +270,17 @@ function onWindowResize() {
     // resize canvas
     camera.aspect = window.innerWidth / window.innerHeight; 
     camera.updateProjectionMatrix(); 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( window.innerWidth*0.7, window.innerHeight*0.7 );
     // var ren_W = document.getElementById("threeD-content").clientWidth;
     // var ren_H = (ren_W*window.innerHeight)/window.innerWidth;
     // renderer.setSize(ren_W, ren_H);
 
+}
+
+function updateURL(nameOn) {
+    // console.log(testArray[bustOn].name);
+    history.pushState("", "", "#" + nameOn);
+    currentURL = window.location.hash;
 }
 
 function animate() {

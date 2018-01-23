@@ -6,5 +6,5 @@ newmtl defaultMat
 Kd 0.7 0.7 0.7
 
 newmtl mat1
-map_Kd vera.bmp
+map_Kd vera.jpg
 

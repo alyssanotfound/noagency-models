@@ -59,7 +59,8 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: blue;
+    color: #00ff00;
     min-width: 250px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -67,7 +68,6 @@ body {
 }
 
 .dropdown-content p {
-    color: black;
     position: relative;
     /*padding: 12px 16px;*/
     text-decoration: none;
@@ -117,8 +117,10 @@ button {
 	display: block; 
 	text-align: right; 
 	padding-right: 1em;
+	padding-top: 1em;
 	border-top: 0.5px solid #00ff00;
-	background-color: #F8F8F8;
+	background-color: vlue;
+	text-align: center;
 }
 
 footer {
@@ -156,20 +158,17 @@ header {
 #threeD-content {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	/*justify-content: space-between;*/
 	left: 0;
 	top: 0;
 	height: auto;
 	width: 100%;
-	background: white;
+	background: blue;
 	z-index: -100;
+	overflow: hidden;
 }
 
-#threeD-content div {
-	width: 100%;
 
-	/*border: 1px solid pink;*/
-}
 
 /* Base classes for all media */
 
