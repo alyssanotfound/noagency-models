@@ -75,7 +75,7 @@ function init() {
     // console.log( gridHelper );
     //path names must match ids of p tags
     // var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine", "kat", "kristen", "gabriette"]
-    var paths = ["yulu","sabrina","eloisa","remy","vera","giannina", "kristen"]
+    var paths = ["yulu","sabrina","eloisa","remy","vera","giannina", "kristen", "taylor", "kat", "gabriette"]
 
     // add event listeners to list of names
     console.log(paths);
