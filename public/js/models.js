@@ -204,6 +204,7 @@ function displayOneModel(evt) {
             bustOn = i;
             testArray[i].visible = true;
             // reposition grid
+            console.log(testArray[i]);
             testArray[i].children["0"].geometry.computeBoundingSphere();
             var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
             gridHelper.position.y=bottOfFeet;
@@ -212,7 +213,7 @@ function displayOneModel(evt) {
             // console.log(evt.target.innerHTML);
             // console.log(document.getElementById("selected").innerHTML);
             document.getElementById("selected").innerHTML = evt.target.innerHTML;
-            console.log(bustOnName[0]);
+            // console.log(bustOnName[0]);
             document.getElementById("info").innerHTML = "height of " + bustOnName;
             updateURL(bustOnName)
         } else {
