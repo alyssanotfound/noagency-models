@@ -1,5 +1,5 @@
 body {
-  background-color: blue;
+  background-color: white;
   margin: 0px;
   font-family: 'Prestige Elite Std', Courier, monospace;
   color: #00ff00;
@@ -30,7 +30,7 @@ body {
 
 #loadingOverlay {
   position: absolute;
-  background-color: blue;
+  background-color: white;
   width: 100%;
   height: 100%;
   z-index:999999;
@@ -68,7 +68,7 @@ body {
 
 .dropbtn {
 	font-family: 'Prestige Elite Std', Courier, monospace;
-    background-color: blue;
+    background-color: white;
     color: #00ff00;
     border: none;
     cursor: pointer;
@@ -81,7 +81,7 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: blue;
+    background-color: white;
     color: #00ff00;
     min-width: 250px;
     overflow: auto;
@@ -98,6 +98,8 @@ body {
 
 button {
 	padding: 0;
+  border: none;
+  outline: none;
 }
 
 .show {
@@ -122,7 +124,7 @@ button {
 .Grid-cell a {
 	position: relative;
 	text-decoration: none;
-	color: blue;
+	color: white;
 }
 
 .fullborder {
@@ -161,7 +163,7 @@ footer p {
 }
 
 header {
-	background-color: blue;
+	background-color: white;
 	color: #00ff00;
 	padding: 0.7em;
 	padding-bottom:0;
@@ -186,7 +188,7 @@ header {
 	top: 0;
 	height: auto;
 	width: 100%;
-	background: blue;
+	background: white;
 	overflow: hidden;
 }
 

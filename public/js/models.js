@@ -40,7 +40,9 @@ function init() {
     }
     /* Camera */
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 2.5;
+    camera.position.x = 50;
+    camera.position.y = 95;
+    camera.position.z = 250;
 
     /* Scene */
     lighting = false;
@@ -67,15 +69,15 @@ function init() {
     sunLight.castShadow = false;
     scene.add(sunLight);
 
-    var size = 0.8; 
-    var divisions = 0.1; 
+    var size = 60; 
+    var divisions = 10; 
     gridHelper = new THREE.GridHelper( size, divisions ); 
-    gridHelper.setColors( 0xf618ef, 0x0ccf0c );
+    gridHelper.setColors( 0x000000, 0x0ccf0c );
     scene.add( gridHelper );
     // console.log( gridHelper );
     //path names must match ids of p tags
     // var paths = ["yulu","sabrina","eloisa","remy","vera","may","giannina","seashell","taylor", "torraine", "kat", "kristen", "gabriette"]
-    var paths = ["yulu","sabrina","eloisa","remy","vera","giannina", "kristen", "taylor", "kat", "gabriette"]
+    var paths = ["yulu","sabrina","eloisa","remy","vera","giannina", "kristen", "taylor", "kat", "gabriette", "torraine", "may", "seashell"]
 
     // add event listeners to list of names
     console.log(paths);
@@ -138,6 +140,9 @@ function init() {
                     }
                     
                     obj.children["0"].geometry.computeBoundingSphere();
+                    // var gridPlacement = -100;
+                    // gridHelper.position.y = gridPlacement;
+                    // obj.children["0"].position.y = gridPlacement + obj.children["0"].geometry.boundingSphere.radius;
                     var bottOfFeet=obj.children["0"].geometry.boundingSphere.center.y-obj.children["0"].geometry.boundingSphere.radius;
                     // console.log(bottOfFeet);
                     // console.log(gridHelper); 
@@ -172,7 +177,7 @@ function init() {
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     // console.log(canvas.width);
-    renderer.setSize(window.innerWidth*0.7, window.innerHeight*0.7);
+    renderer.setSize(window.innerWidth*0.8, window.innerHeight*0.8);
     // renderer.setSize(document.getElementById("threeD-content").clientWidth, document.getElementById("threeD-content").clientHeight)
     // var ren_W = document.getElementById("threeD-content").clientWidth;
     // var ren_H = (ren_W*window.innerHeight)/window.innerWidth;
@@ -204,7 +209,7 @@ function displayOneModel(evt) {
             bustOn = i;
             testArray[i].visible = true;
             // reposition grid
-            console.log(testArray[i]);
+            // console.log(testArray[i]);
             testArray[i].children["0"].geometry.computeBoundingSphere();
             var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
             gridHelper.position.y=bottOfFeet;
@@ -214,7 +219,7 @@ function displayOneModel(evt) {
             // console.log(document.getElementById("selected").innerHTML);
             document.getElementById("selected").innerHTML = evt.target.innerHTML;
             // console.log(bustOnName[0]);
-            document.getElementById("info").innerHTML = "height of " + bustOnName;
+            document.getElementById("info").innerHTML = window[bustOnName];
             updateURL(bustOnName)
         } else {
             testArray[i].visible = false;
@@ -241,7 +246,7 @@ function displayOneModelOnLoad(modelName) {
             // console.log(evt.target.innerHTML);
             // console.log(document.getElementById("selected").innerHTML);
             document.getElementById("selected").innerHTML = document.getElementById(bustOnName).innerHTML;
-            document.getElementById("info").innerHTML = "height of " + bustOnName;
+            document.getElementById("info").innerHTML = window[bustOnName];
             updateURL(bustOnName);
         } else {
             testArray[i].visible = false;
