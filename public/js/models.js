@@ -14,6 +14,7 @@ var windowHalfY = window.innerHeight / 2;
 var LoadingTimeStamp = 0;
 var testArray = [];
 var storedTexture = [];
+var j = 0;
 var bustOn = undefined;
 var bustOnName = undefined;
 
@@ -86,84 +87,18 @@ function init() {
         document.getElementById(paths[n]).addEventListener("click", displayOneModel, false);
     }
 
-    j = 0;
-
-    function loadNextPath() {
-        var p = paths.pop();
-        var pathToLoad = "assets/" + p + "/";
-        // console.log(p);
-        ModelCount.innerHTML = pathToLoad;
-        if (!p) {
-            console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
-            animate();
-            document.getElementById("loadingOverlay").style.display="none";
-            if (currentURL != "") {
-                //load specific piece
-                var URLbust = currentURL.split("#").pop();
-                console.log("the current URL / model num is: " + URLbust);
-                displayOneModelOnLoad(URLbust);
-            }
-        } else {
-            // document.getElementById(p).addEventListener('click', displayOneModel(p));
-            // console.log(p);
-            var mtlLoader = new THREE.MTLLoader();
-            mtlLoader.setBaseUrl(pathToLoad);
-            mtlLoader.setPath(pathToLoad);     
-            var mtlFile = p + ".mtl";
-            // console.log(mtlFile);                  
-            mtlLoader.load(mtlFile, function (materials) {
-
-                materials.preload();
-                var objLoader = new THREE.OBJLoader();
-                objLoader.setMaterials(materials);
-                objLoader.setPath(pathToLoad);
-                // console.log("loading model");
-                var objFile = p + ".obj";
-                // console.log(objFile);
-                objLoader.load(objFile, function (obj) {
-                    var l = pathToLoad.length;
-                    obj.name = pathToLoad.substring(7, l-1);
-                    var mesh = obj.children[ 0 ]; 
-                    mesh.geometry = new THREE.Geometry().fromBufferGeometry( mesh.geometry ); 
-                    mesh.geometry.mergeVertices(); 
-                    mesh.geometry.computeVertexNormals();
-                    testArray.push(obj);
-                    storedTexture[j] = obj.children[0].material.map;
-                    // console.log(obj.name);
-                    scene.add(obj); 
-                    // console.log(currentURL);
-                    // TEMP
-                    if (currentURL == "" && obj.name == "eloisa") {
-                        displayOneModelOnLoad(obj.name);
-                    } else {
-                       obj.visible = false; 
-                    }
-                    
-                    obj.children["0"].geometry.computeBoundingSphere();
-                    // var gridPlacement = -100;
-                    // gridHelper.position.y = gridPlacement;
-                    // obj.children["0"].position.y = gridPlacement + obj.children["0"].geometry.boundingSphere.radius;
-                    var bottOfFeet=obj.children["0"].geometry.boundingSphere.center.y-obj.children["0"].geometry.boundingSphere.radius;
-                    // console.log(bottOfFeet);
-                    // console.log(gridHelper); 
-                    gridHelper.position.y=bottOfFeet;
-                    loadNextPath(); 
-                });
-            });
-            // console.timeEnd(pathToLoad);
-            var end = window.performance.now(); 
-            // console.log("end: " + end);
-            var time = end - LoadingTimeStamp;
-            // console.log(time);
-            LoadingTimeStamp = end;
-            LoadCount.innerHTML = Math.round(time * 100 / 1000) / 100 + " s";
-        }
-    
-    }
-    loadNextPath();
+    // loadNextPath("eloisa");
 
     //URL
     currentURL = window.location.hash;
+
+    //check if there is name in URL on load
+    if (currentURL != "") {
+        //load specific piece
+        var URLbust = currentURL.split("#").pop();
+        console.log("the current URL / model num is: " + URLbust);
+        displayOneModelOnLoad(URLbust);
+    }
 
     /* Vectors */
     raycaster = new THREE.Raycaster();
@@ -194,6 +129,86 @@ function init() {
     controls.dampingFactor = 0.25; 
     controls.enableZoom = false;
 }
+//end init
+
+function loadNextPath(name) {
+    testArray = [];
+    scene.remove(scene.children[5]);
+    console.log("load this person: " + name);
+    // var p = paths.pop();
+    var pathToLoad = "assets/" + name + "/";
+    // console.log(p);
+    // ModelCount.innerHTML = pathToLoad;
+    // if (!p) {
+    //     console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
+    //     animate();
+    //     // document.getElementById("loadingOverlay").style.display="none";
+    //     if (currentURL != "") {
+    //         //load specific piece
+    //         var URLbust = currentURL.split("#").pop();
+    //         console.log("the current URL / model num is: " + URLbust);
+    //         displayOneModelOnLoad(URLbust);
+    //     }
+    // } else {
+    //     // document.getElementById(p).addEventListener('click', displayOneModel(p));
+    //     // console.log(p);
+    var mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setBaseUrl(pathToLoad);
+    mtlLoader.setPath(pathToLoad);     
+    var mtlFile = name + ".mtl";
+    // console.log(mtlFile);                  
+    mtlLoader.load(mtlFile, function (materials) {
+
+        materials.preload();
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.setPath(pathToLoad);
+        // console.log("loading model");
+        var objFile = name + ".obj";
+        // console.log(objFile);
+        objLoader.load(objFile, function (obj) {
+            var l = pathToLoad.length;
+            obj.name = pathToLoad.substring(7, l-1);
+            var mesh = obj.children[ 0 ]; 
+            mesh.geometry = new THREE.Geometry().fromBufferGeometry( mesh.geometry ); 
+            mesh.geometry.mergeVertices(); 
+            mesh.geometry.computeVertexNormals();
+            testArray.push(obj);
+            storedTexture[j] = obj.children[0].material.map;
+            // console.log(obj.name);
+            scene.add(obj); 
+            // console.log(currentURL);
+            // TEMP
+            // if (currentURL == "" && obj.name == "eloisa") {
+            //     displayOneModelOnLoad(obj.name);
+            // } else {
+            //    obj.visible = false; 
+            // }
+            
+            obj.children["0"].geometry.computeBoundingSphere();
+            // var gridPlacement = -100;
+            // gridHelper.position.y = gridPlacement;
+            // obj.children["0"].position.y = gridPlacement + obj.children["0"].geometry.boundingSphere.radius;
+            var bottOfFeet=obj.children["0"].geometry.boundingSphere.center.y-obj.children["0"].geometry.boundingSphere.radius;
+            // console.log(bottOfFeet);
+            // console.log(gridHelper); 
+            gridHelper.position.y=bottOfFeet;
+            animate();
+            // loadNextPath(); 
+        });
+    });
+    
+    // console.timeEnd(pathToLoad);
+    // var end = window.performance.now(); 
+    // console.log("end: " + end);
+    // var time = end - LoadingTimeStamp;
+    // console.log(time);
+    // LoadingTimeStamp = end;
+    // LoadCount.innerHTML = Math.round(time * 100 / 1000) / 100 + " s";
+    // }
+    
+}
+
 
 function displayOneModel(evt) {
     // remove selected model name in list
@@ -201,57 +216,63 @@ function displayOneModel(evt) {
     //     var modelRemoveClass = document.getElementById(bustOnName).classList;
     //     modelRemoveClass.remove("selected");
     // }
-    var foundPerson;
-    for (var i = testArray.length - 1; i >= 0; i--) {
-        if (testArray[i].name === evt.target.id) {
-            bustOnName = evt.target.id;
-            var foundPerson = i;
-            bustOn = i;
-            testArray[i].visible = true;
+    // var foundPerson;
+    // for (var i = testArray.length - 1; i >= 0; i--) {
+        // if (testArray[i].name === evt.target.id) {
+            // bustOnName = evt.target.id;
+            // var foundPerson = i;
+            // bustOn = i;
+            // console.log(evt.target.id);
+
+            loadNextPath(evt.target.id);
+            // testArray[i].visible = true;
             // reposition grid
             // console.log(testArray[i]);
-            testArray[i].children["0"].geometry.computeBoundingSphere();
-            var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
-            gridHelper.position.y=bottOfFeet;
+            // testArray[i].children["0"].geometry.computeBoundingSphere();
+            // var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
+            // gridHelper.position.y=bottOfFeet;
             // var modelClasses = document.getElementById(evt.target.id).classList;
             // modelClasses.add("selected");
             // console.log(evt.target.innerHTML);
             // console.log(document.getElementById("selected").innerHTML);
             document.getElementById("selected").innerHTML = evt.target.innerHTML;
             // console.log(bustOnName[0]);
-            document.getElementById("info").innerHTML = window[bustOnName];
-            updateURL(bustOnName)
-        } else {
-            testArray[i].visible = false;
-        }
-    }
+            document.getElementById("info").innerHTML = window[evt.target.id];
+            updateURL(evt.target.id)
+        // } else {
+            // testArray[i].visible = false;
+        // }
+    // }
 }
 
 // on load display active model from url
 function displayOneModelOnLoad(modelName) {
-
-    var foundPerson;
-    for (var i = testArray.length - 1; i >= 0; i--) {
-        if (testArray[i].name === modelName) {
-            bustOnName = modelName;
-            var foundPerson = i;
-            bustOn = i;
-            testArray[i].visible = true;
-            // reposition grid
-            testArray[i].children["0"].geometry.computeBoundingSphere();
-            var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
-            gridHelper.position.y=bottOfFeet;
-            // var modelClasses = document.getElementById(evt.target.id).classList;
-            // modelClasses.add("selected");
-            // console.log(evt.target.innerHTML);
-            // console.log(document.getElementById("selected").innerHTML);
-            document.getElementById("selected").innerHTML = document.getElementById(bustOnName).innerHTML;
-            document.getElementById("info").innerHTML = window[bustOnName];
-            updateURL(bustOnName);
-        } else {
-            testArray[i].visible = false;
-        }
-    }
+    loadNextPath(modelName);
+    document.getElementById("selected").innerHTML = document.getElementById(modelName).innerHTML;
+    document.getElementById("info").innerHTML = window[modelName];
+    updateURL(modelName);
+    // var foundPerson;
+    // for (var i = testArray.length - 1; i >= 0; i--) {
+    //     if (testArray[i].name === modelName) {
+    //         bustOnName = modelName;
+    //         var foundPerson = i;
+    //         // bustOn = i;
+    //         testArray[i].visible = true;
+    //         // reposition grid
+    //         testArray[i].children["0"].geometry.computeBoundingSphere();
+    //         var bottOfFeet=testArray[i].children["0"].geometry.boundingSphere.center.y-testArray[i].children["0"].geometry.boundingSphere.radius;
+    //         gridHelper.position.y=bottOfFeet;
+    //         // var modelClasses = document.getElementById(evt.target.id).classList;
+    //         // modelClasses.add("selected");
+    //         // console.log(evt.target.innerHTML);
+    //         // console.log(document.getElementById("selected").innerHTML);
+    //         document.getElementById("selected").innerHTML = document.getElementById(bustOnName).innerHTML;
+    //         document.getElementById("info").innerHTML = window[bustOnName];
+    //         updateURL(bustOnName);
+    //     } else {
+    //         testArray[i].visible = false;
+    //     }
+    // }
 }
 
 // dropdown
