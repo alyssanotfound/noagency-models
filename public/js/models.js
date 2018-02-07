@@ -41,9 +41,11 @@ function init() {
     }
     /* Camera */
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.x = 50;
-    camera.position.y = 95;
-    camera.position.z = 250;
+    // 0, 1 , 2 for original scans
+    // 50 , 95 , 250 for Anna's edits
+    camera.position.x = 0;
+    camera.position.y = 1;
+    camera.position.z = 2;
 
     /* Scene */
     lighting = false;
